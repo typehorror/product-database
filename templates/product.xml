@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<objects>
+{% for product in products %}
+<object pk="{{ product.pk }}" model="product.product">
+    <property name="item_number">{{ product.item_number }}</property>
+    <property name="title">{{ product.title }}</property>
+    <property name="description">{{ product.description }}</property>
+    {% for picture in product.pictures.all %}
+    <object pk="{{ picture.pk }}" model="picture.picture">
+        <property name="title">{{ picture.title }}</property>
+        <property name="url">http://{{current_site}}{{ picture.file.url }}</property>
+    </object>
+    {% endfor %}
+    {% for document in product.documents.all %}
+    <object pk="{{ document.pk }}" model="document.document">
+        <property name="title">{{ document.title }}</property>
+        <property name="url">http://{{current_site}}{{ document.file.url }}</property>
+    </object>
+    {% endfor %}
+    {% for inventory in product.inventories.all %}
+    <object pk="{{ inventory.pk }}" model="inventory.inventory">
+        <property name="warehouse">{{ inventory.warehouse.ref }}</property>
+        <property name="quantity">{{ inventory.quantity }}</property>
+        <property name="date">{{ inventory.modification_date }}</property>
+    </object>
+    {% endfor %}
+</object>
+{% endfor %}
+</objects>
