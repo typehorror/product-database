@@ -4,6 +4,8 @@ rest interface testing
 from django.utils.functional import curry
 from django.test import TestCase
 
+from binascii import b2a_base64
+
 from models import Product, Category
 
 class BasicTest(TestCase):
@@ -13,34 +15,35 @@ class BasicTest(TestCase):
     def setUp(self):
         self.client.put = curry(self.client.post, REQUEST_METHOD='PUT')
         self.client.delete = curry(self.client.get, REQUEST_METHOD='DELETE')
+        self.headers = {'HTTP_AUTHORIZATION': 'Basic %s' % b2a_base64('rest:rest')[:-1]}
 
     def test_security_on_post(self):
         url = '/product/'
         response = self.client.post(url,{'description':'my new description'})
-        self.failUnlessEqual(response.status_code, 404)
+        self.failUnlessEqual(response.status_code, 401)
 
     def test_security_on_put(self):
         # test the update url
         url = '/product/FCFQ18W827/'
         response = self.client.put(url,{'description':'my new description'})
-        self.failUnlessEqual(response.status_code, 404)
+        self.failUnlessEqual(response.status_code, 401)
 
     def test_security_on_delete(self):
         # test the delete product url
         url = '/product/FCFQ18W827/'
         response = self.client.delete(url)
-        self.failUnlessEqual(response.status_code, 404)
+        self.failUnlessEqual(response.status_code, 401)
 
     def test_security_on_get(self):
         # test the listing url
 
         url = '/product/'
         response = self.client.get(url)
-        self.failUnlessEqual(response.status_code, 404)
+        self.failUnlessEqual(response.status_code, 401)
         # test the product detail url
         url = '/product/FCFQ18W827/'
         response = self.client.get(url)
-        self.failUnlessEqual(response.status_code, 404)
+        self.failUnlessEqual(response.status_code, 401)
 
     def test_create_product(self):
         url = '/product/'
@@ -51,10 +54,7 @@ class BasicTest(TestCase):
             'category': 'qwerty',
         }
 
-        response = self.client.post('/login/', {'username': 'rest', 'password': 'rest'})
-        self.failUnlessEqual(response.status_code, 302)
-
-        response = self.client.post(url, new_product)
+        response = self.client.post(url, new_product, **self.headers)
         # Request should be validated by a 200
         self.failUnlessEqual(response.status_code, 200)
         # The category is supposed to be auto created
@@ -72,10 +72,7 @@ class BasicTest(TestCase):
         product = Product.objects.all()[0]
         url = '/product/%s/' % product.item_number
 
-        response = self.client.post('/login/', {'username': 'rest', 'password': 'rest'})
-        self.failUnlessEqual(response.status_code, 302)
-
-        response = self.client.get(url)
+        response = self.client.get(url, **self.headers)
         # Request should be validated by a 200
         self.failUnlessEqual(response.status_code, 200)
 
@@ -85,10 +82,7 @@ class BasicTest(TestCase):
         # first test we update description
         values = {'description': 'New description'}
 
-        response = self.client.post('/login/', {'username': 'rest', 'password': 'rest'})
-        self.failUnlessEqual(response.status_code, 302)
-
-        response = self.client.put(url, values)
+        response = self.client.put(url, values, **self.headers)
         # Request should be validated by a 200
         self.failUnlessEqual(response.status_code, 200)
         # Check object consistency
@@ -99,7 +93,7 @@ class BasicTest(TestCase):
         
         # second test: we update category which is a related object
         values = {'category':'23545747'}
-        response = self.client.put(url, values)
+        response = self.client.put(url, values, **self.headers)
         # Request should be validated by a 200
         self.failUnlessEqual(response.status_code, 200)
         # Check object consistency
@@ -118,10 +112,7 @@ class BasicTest(TestCase):
         # first test we update description
         values = {'wrong_1245': 'Wrong property name'}
 
-        response = self.client.post('/login/', {'username': 'rest', 'password': 'rest'})
-        self.failUnlessEqual(response.status_code, 302)
-
-        response = self.client.put(url, values)
+        response = self.client.put(url, values, **self.headers)
         self.failUnlessEqual(response.status_code, 404)
         
 
@@ -130,14 +121,23 @@ class BasicTest(TestCase):
         product_item_number = 'DLB09PRO'
         product = Product.objects.get(item_number=product_item_number)
         
-        response = self.client.post('/login/', {'username': 'rest', 'password': 'rest'})
-        self.failUnlessEqual(response.status_code, 302)
-
         url = '/product/%s/' % product_item_number
-        response = self.client.delete(url)
+        response = self.client.delete(url, **self.headers)
         # Request should be validated by a 200
         self.failUnlessEqual(response.status_code, 200)
         self.assertRaises(Product.DoesNotExist, Product.objects.get,item_number=product_item_number) 
         # make sure that the category hasn't been deleted
         Category.objects.get(pk=product.category_id)
+
+    def test_basic_header_auth(self):
+        url = '/product/'
+
+        # First wrong password should fail 
+        headers = { 'HTTP_AUTHORIZATION': 'Basic %s' % b2a_base64('rest:wrong_password')[:-1]}
+        response = self.client.get(url,**headers)
+        self.failUnlessEqual(response.status_code, 401)
+    
+        # Right password should succeed
+        response = self.client.get(url,**self.headers)
+        self.failUnlessEqual(response.status_code, 200)
 

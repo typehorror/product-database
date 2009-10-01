@@ -6,28 +6,14 @@ from django.template import RequestContext
 from django.shortcuts import get_object_or_404
 from django.http import Http404, HttpResponse
 
+from django_restapi.authentication import * 
+
 from models import Product, Category
 from picture.models import Picture
 from forms import ProductForm, ProductFormWithoutCategory, ProductFormWithoutCategoryNotMandatory
 
-def login_required_or_404(f):
-    def wrap(self, request, *args, **kwargs):
-        """
-        Check if user is connected, if not it return a 404 response according
-        to the rfc2616 (10.4.4) a 404 can be used instead of a 403 if no 
-        explanation is given.
-        """
-        if request.user.is_anonymous():
-            from django.http import Http404
-            raise Http404
-        return f(self, request, *args, **kwargs)
-    wrap.__doc__=f.__doc__
-    wrap.__name__=f.__name__
-    return wrap
-
 class ProductResource(Resource):
 
-    @login_required_or_404
     def read(self, request, *args, **kwargs):
         """
         return the complete product list of product
@@ -52,7 +38,6 @@ class ProductResource(Resource):
             return response
         raise Http404
 
-    @login_required_or_404
     def update(self, request, item_number):
         """
         Update a property values on the item number provided
@@ -79,7 +64,6 @@ class ProductResource(Resource):
                 return HttpResponse()
         raise Http404
      
-    @login_required_or_404
     def delete(self, request, item_number):
         """
         Delete the requested object.
@@ -91,7 +75,6 @@ class ProductResource(Resource):
             return HttpResponse()
         raise Http404
 
-    @login_required_or_404
     def create(self, request):
         """
         Generate a new product. Fail if the product property.
