@@ -30,11 +30,17 @@ class BasicTest(TestCase):
         self.adminheaders = {'HTTP_AUTHORIZATION': 'Basic %s' % b2a_base64('restadmin:restadmin')[:-1]}
 
     def test_security_on_post(self):
+        """
+        test that nobody can create a product listing without auth
+        """
         url = '/product/'
         response = self.client.post(url,{'description':'my new description'})
         self.failUnlessEqual(response.status_code, 401)
 
     def test_security_on_put(self):
+        """
+        test that nobody can modify an existing product without auth
+        """
         # test the update url
         product = Product.objects.all()[0]
         url = '/product/%s/' % product.item_number
@@ -42,6 +48,9 @@ class BasicTest(TestCase):
         self.failUnlessEqual(response.status_code, 401)
 
     def test_security_on_delete(self):
+        """
+        test that nobody can delete an existing product without auth
+        """
         # test the delete product url
         product = Product.objects.all()[0]
         url = '/product/%s/' % product.item_number
@@ -49,6 +58,10 @@ class BasicTest(TestCase):
         self.failUnlessEqual(response.status_code, 401)
 
     def test_security_on_get(self):
+        """
+        test that nobody can retrieve the complete product list
+        without the correct credidential 
+        """
         # test the listing url
         product = Product.objects.all()[0]
         url = '/product/'
@@ -87,17 +100,22 @@ class BasicTest(TestCase):
         self.assertEqual(product.category, category)
 
     def test_get_all_objects(self):
+        """
+        Test that only user with "rest_can_read_all" can see
+        all objects.
+        """
         url = '/product/'
         response = self.client.get(url, **self.headers)
         # Request should not be validated by a 401
         self.failUnlessEqual(response.status_code, 401)
-        #import pdb; pdb.set_trace()
         response = self.client.get(url, **self.advancedheaders)
         # Request should be validated by a 200
         self.failUnlessEqual(response.status_code, 200)
         xml_response = parseString(response.content)
-        #quantity_tags =[elt for elt in xml_response.getElementsByTagName('property') if elt.getAttribute('name') == 'quantity']
-        #self.failUnlessEqual(len(quantity_tags), product.inventories.count())
+
+        product_tags =[elt for elt in xml_response.getElementsByTagName('object') if elt.getAttribute('model') == 'product.product']
+        # check that all product are displayed
+        self.failUnlessEqual(len(product_tags), Product.objects.count())
 
     def test_quantity_showed(self):
         product = Product.objects.all()[0]
@@ -120,11 +138,6 @@ class BasicTest(TestCase):
         # no quantity should be found
         quantity_tags =[elt for elt in xml_response.getElementsByTagName('property') if elt.getAttribute('name') == 'quantity']
         self.failUnlessEqual(len(quantity_tags), 0)
-        # availability should be found
-        #quantity_tags =[elt for elt in xml_response.getElementsByTagName('available') if elt.getAttribute('name') == 'quantity']
-        #self.failUnlessEqual(len(available_tags), product.inventories.count())
-
-        
 
     def test_get_object(self):
         product = Product.objects.all()[0]

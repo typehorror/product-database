@@ -44,7 +44,6 @@ class ProductResource(Resource):
         is provided
         """
         if not (request.user.has_perm('product.rest_can_read_all') or kwargs):
-            #import pdb; pdb.set_trace()
             return Http401
         if request.method == 'GET':
             response = HttpResponse(mimetype='application/xml')
