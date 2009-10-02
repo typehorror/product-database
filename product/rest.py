@@ -52,11 +52,13 @@ class ProductResource(Resource):
             
             if 'item_number' in kwargs:
                 products =  [ get_object_or_404(Product, item_number__iexact=kwargs['item_number']), ]
+                if 'quantity' in kwargs:
+                    context['quantity'] = int(kwargs['quantity'])
             else:
                 products = Product.objects.all().select_related()
                 
-            context = {'products': products,
-                       'current_site': Site.objects.get_current()}
+            context['products'] = products
+
             response.content = render_to_string('product.xml', 
                                                 context, 
                                                 context_instance=RequestContext(request))
