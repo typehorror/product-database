@@ -19,11 +19,12 @@ class Product(models.Model):
 
     class Meta:
         permissions = (
-            ("can_update", "REST-Can update an existing product"),
-            ("can_delete", "REST-Can delete a product"),
-            ("can_create", "REST-Can create a new product"),
-            ("can_read", "REST-Can read a product property"),
-            ("can_read_all", "REST-Can read all product in one request"),
+            ("rest_can_update", "REST-Can update an existing product"),
+            ("rest_can_delete", "REST-Can delete a product"),
+            ("rest_can_create", "REST-Can create a new product"),
+            ("rest_can_read", "REST-Can read a product property"),
+            ("rest_can_read_all", "REST-Can read all product in one request"),
+            ("rest_can_see_quantity", "REST-Can see quantity in stock"),
         )
 
     def __unicode__(self):

@@ -30,17 +30,22 @@ def permission_required_or_401(perm):
         return wrap
     return check_permission
 
+Http401 = HttpResponse()
+Http401.status_code = 401
+Http401['WWW-Authenticate'] = 'Basic realm="Restricted Access"'
+
 class ProductResource(Resource):
 
-    @permission_required_or_401('product.can_read')
+    @permission_required_or_401('product.rest_can_read')
     def read(self, request, *args, **kwargs):
         """
         return the complete list of product
         and the detail of a specified product it item number
         is provided
         """
-        #if not request.user.has_perm('product.can_read'):
-        #    return Http401
+        if not (request.user.has_perm('product.rest_can_read_all') or kwargs):
+            #import pdb; pdb.set_trace()
+            return Http401
         if request.method == 'GET':
             response = HttpResponse(mimetype='application/xml')
             
@@ -59,7 +64,7 @@ class ProductResource(Resource):
             return response
         raise Http404
 
-    @permission_required_or_401('product.can_update')
+    @permission_required_or_401('product.rest_can_update')
     def update(self, request, item_number):
         """
         Update a property values on the item number provided
@@ -86,7 +91,7 @@ class ProductResource(Resource):
                 return HttpResponse()
         raise Http404
      
-    @permission_required_or_401('product.can_delete')
+    @permission_required_or_401('product.rest_can_delete')
     def delete(self, request, item_number):
         """
         Delete the requested object.
@@ -98,7 +103,7 @@ class ProductResource(Resource):
             return HttpResponse()
         raise Http404
 
-    @permission_required_or_401('product.can_create')
+    @permission_required_or_401('product.rest_can_create')
     def create(self, request):
         """
         Generate a new product. Fail if the product property.

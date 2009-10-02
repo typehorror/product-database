@@ -1,21 +1,32 @@
 """
 rest interface testing
 """
+from xml.dom.minidom import parseString
+from binascii import b2a_base64
+
+
 from django.utils.functional import curry
 from django.test import TestCase
 
-from binascii import b2a_base64
 
 from models import Product, Category
 
 class BasicTest(TestCase):
 
-    fixtures = ['test.json',]
+    fixtures = ['categories.json',
+                'groups.json',
+                'permissions.json',
+                'products.json',
+                'users.json',
+                'inventories.json',
+                'warehouses.json',
+                ]
         
     def setUp(self):
         self.client.put = curry(self.client.post, REQUEST_METHOD='PUT')
         self.client.delete = curry(self.client.get, REQUEST_METHOD='DELETE')
         self.headers = {'HTTP_AUTHORIZATION': 'Basic %s' % b2a_base64('rest:rest')[:-1]}
+        self.advancedheaders = {'HTTP_AUTHORIZATION': 'Basic %s' % b2a_base64('restadvanced:restadvanced')[:-1]}
         self.adminheaders = {'HTTP_AUTHORIZATION': 'Basic %s' % b2a_base64('restadmin:restadmin')[:-1]}
 
     def test_security_on_post(self):
@@ -25,25 +36,27 @@ class BasicTest(TestCase):
 
     def test_security_on_put(self):
         # test the update url
-        url = '/product/FCFQ18W827/'
+        product = Product.objects.all()[0]
+        url = '/product/%s/' % product.item_number
         response = self.client.put(url,{'description':'my new description'})
         self.failUnlessEqual(response.status_code, 401)
 
     def test_security_on_delete(self):
         # test the delete product url
-        url = '/product/FCFQ18W827/'
+        product = Product.objects.all()[0]
+        url = '/product/%s/' % product.item_number
         response = self.client.delete(url)
         self.failUnlessEqual(response.status_code, 401)
 
     def test_security_on_get(self):
         # test the listing url
-
+        product = Product.objects.all()[0]
         url = '/product/'
         response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 401)
         # test the product detail url
-        url = '/product/FCFQ18W827/'
-        response = self.client.get(url)
+        url = '/product/%s/' % product.item_number
+        Response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 401)
 
     def test_create_product(self):
@@ -72,6 +85,46 @@ class BasicTest(TestCase):
         self.assertEqual(product.title, new_product['title'])
         self.assertEqual(product.description, new_product['description'])
         self.assertEqual(product.category, category)
+
+    def test_get_all_objects(self):
+        url = '/product/'
+        response = self.client.get(url, **self.headers)
+        # Request should not be validated by a 401
+        self.failUnlessEqual(response.status_code, 401)
+        #import pdb; pdb.set_trace()
+        response = self.client.get(url, **self.advancedheaders)
+        # Request should be validated by a 200
+        self.failUnlessEqual(response.status_code, 200)
+        xml_response = parseString(response.content)
+        #quantity_tags =[elt for elt in xml_response.getElementsByTagName('property') if elt.getAttribute('name') == 'quantity']
+        #self.failUnlessEqual(len(quantity_tags), product.inventories.count())
+
+    def test_quantity_showed(self):
+        product = Product.objects.all()[0]
+        url = '/product/%s/' % product.item_number
+        response = self.client.get(url, **self.advancedheaders)
+        # Request should be validated by a 200
+        self.failUnlessEqual(response.status_code, 200)
+        xml_response = parseString(response.content)
+        # no quantity should be found
+        quantity_tags =[elt for elt in xml_response.getElementsByTagName('property') if elt.getAttribute('name') == 'quantity']
+        self.failUnlessEqual(len(quantity_tags), product.inventories.count())
+
+    def test_no_quantity_showed(self):
+        product = Product.objects.all()[0]
+        url = '/product/%s/' % product.item_number
+        response = self.client.get(url, **self.headers)
+        # Request should be validated by a 200
+        self.failUnlessEqual(response.status_code, 200)
+        xml_response = parseString(response.content)
+        # no quantity should be found
+        quantity_tags =[elt for elt in xml_response.getElementsByTagName('property') if elt.getAttribute('name') == 'quantity']
+        self.failUnlessEqual(len(quantity_tags), 0)
+        # availability should be found
+        #quantity_tags =[elt for elt in xml_response.getElementsByTagName('available') if elt.getAttribute('name') == 'quantity']
+        #self.failUnlessEqual(len(available_tags), product.inventories.count())
+
+        
 
     def test_get_object(self):
         product = Product.objects.all()[0]
@@ -131,9 +184,8 @@ class BasicTest(TestCase):
 
     def test_delete_object(self):
         # Make sure that the object exists
-        product_item_number = 'DLB09PRO'
-        product = Product.objects.get(item_number=product_item_number)
-        url = '/product/%s/' % product_item_number
+        product = Product.objects.all()[0]
+        url = '/product/%s/' % product.item_number
         
         # should fail because of the user permissions
         response = self.client.delete(url, **self.headers)
@@ -142,7 +194,7 @@ class BasicTest(TestCase):
         response = self.client.delete(url, **self.adminheaders)
         # Request should be validated by a 200
         self.failUnlessEqual(response.status_code, 200)
-        self.assertRaises(Product.DoesNotExist, Product.objects.get,item_number=product_item_number) 
+        self.assertRaises(Product.DoesNotExist, Product.objects.get,item_number=product.item_number) 
         # make sure that the category hasn't been deleted
         Category.objects.get(pk=product.category_id)
 
@@ -155,6 +207,6 @@ class BasicTest(TestCase):
         self.failUnlessEqual(response.status_code, 401)
     
         # Right password should succeed
-        response = self.client.get(url,**self.headers)
+        response = self.client.get(url,**self.advancedheaders)
         self.failUnlessEqual(response.status_code, 200)
 

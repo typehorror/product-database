@@ -17,6 +17,7 @@
         <property name="url">http://{{current_site}}{{ document.file.url }}</property>
     </object>
     {% endfor %}
+    {% if perms.product.rest_can_see_quantity %}
     {% for inventory in product.inventories.all %}
     <object pk="{{ inventory.pk }}" model="inventory.inventory">
         <property name="warehouse">{{ inventory.warehouse.ref }}</property>
@@ -24,6 +25,7 @@
         <property name="date">{{ inventory.modification_date }}</property>
     </object>
     {% endfor %}
+    {% endif %}
 </object>
 {% endfor %}
 </objects>
