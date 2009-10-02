@@ -17,8 +17,18 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     category = models.ForeignKey(Category, related_name='products')
 
+    class Meta:
+        permissions = (
+            ("can_update", "REST-Can update an existing product"),
+            ("can_delete", "REST-Can delete a product"),
+            ("can_create", "REST-Can create a new product"),
+            ("can_read", "REST-Can read a product property"),
+            ("can_read_all", "REST-Can read all product in one request"),
+        )
+
     def __unicode__(self):
         return self.item_number
+
 
 class Import(models.Model):
     """

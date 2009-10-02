@@ -10,12 +10,13 @@ from models import Product, Category
 
 class BasicTest(TestCase):
 
-    fixtures = ['initial_data.json']
+    fixtures = ['test.json',]
         
     def setUp(self):
         self.client.put = curry(self.client.post, REQUEST_METHOD='PUT')
         self.client.delete = curry(self.client.get, REQUEST_METHOD='DELETE')
         self.headers = {'HTTP_AUTHORIZATION': 'Basic %s' % b2a_base64('rest:rest')[:-1]}
+        self.adminheaders = {'HTTP_AUTHORIZATION': 'Basic %s' % b2a_base64('restadmin:restadmin')[:-1]}
 
     def test_security_on_post(self):
         url = '/product/'
@@ -54,7 +55,11 @@ class BasicTest(TestCase):
             'category': 'qwerty',
         }
 
+        # should fail because of the user permissions
         response = self.client.post(url, new_product, **self.headers)
+        self.failUnlessEqual(response.status_code, 401)
+
+        response = self.client.post(url, new_product, **self.adminheaders)
         # Request should be validated by a 200
         self.failUnlessEqual(response.status_code, 200)
         # The category is supposed to be auto created
@@ -82,7 +87,11 @@ class BasicTest(TestCase):
         # first test we update description
         values = {'description': 'New description'}
 
+        # should fail because of the user permissions
         response = self.client.put(url, values, **self.headers)
+        self.failUnlessEqual(response.status_code, 401)
+
+        response = self.client.put(url, values, **self.adminheaders)
         # Request should be validated by a 200
         self.failUnlessEqual(response.status_code, 200)
         # Check object consistency
@@ -93,7 +102,7 @@ class BasicTest(TestCase):
         
         # second test: we update category which is a related object
         values = {'category':'23545747'}
-        response = self.client.put(url, values, **self.headers)
+        response = self.client.put(url, values, **self.adminheaders)
         # Request should be validated by a 200
         self.failUnlessEqual(response.status_code, 200)
         # Check object consistency
@@ -112,7 +121,11 @@ class BasicTest(TestCase):
         # first test we update description
         values = {'wrong_1245': 'Wrong property name'}
 
+        # should fail because of the user permissions
         response = self.client.put(url, values, **self.headers)
+        self.failUnlessEqual(response.status_code, 401)
+
+        response = self.client.put(url, values, **self.adminheaders)
         self.failUnlessEqual(response.status_code, 404)
         
 
@@ -120,9 +133,13 @@ class BasicTest(TestCase):
         # Make sure that the object exists
         product_item_number = 'DLB09PRO'
         product = Product.objects.get(item_number=product_item_number)
-        
         url = '/product/%s/' % product_item_number
+        
+        # should fail because of the user permissions
         response = self.client.delete(url, **self.headers)
+        self.failUnlessEqual(response.status_code, 401)
+
+        response = self.client.delete(url, **self.adminheaders)
         # Request should be validated by a 200
         self.failUnlessEqual(response.status_code, 200)
         self.assertRaises(Product.DoesNotExist, Product.objects.get,item_number=product_item_number) 
