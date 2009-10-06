@@ -17,6 +17,14 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     category = models.ForeignKey(Category, related_name='products')
 
+    @property
+    def picture(self):
+        pictures = self.pictures.all()
+        if pictures:
+            return picture[0]
+        return ''
+        
+
     class Meta:
         permissions = (
             ("rest_can_update", "REST-Can update an existing product"),

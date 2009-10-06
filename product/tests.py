@@ -33,7 +33,7 @@ class BasicTest(TestCase):
         """
         test that nobody can create a product listing without auth
         """
-        url = '/product/'
+        url = '/product/xml/'
         response = self.client.post(url,{'description':'my new description'})
         self.failUnlessEqual(response.status_code, 401)
 
@@ -43,7 +43,7 @@ class BasicTest(TestCase):
         """
         # test the update url
         product = Product.objects.all()[0]
-        url = '/product/%s/' % product.item_number
+        url = '/product/xml/%s/' % product.item_number
         response = self.client.put(url,{'description':'my new description'})
         self.failUnlessEqual(response.status_code, 401)
 
@@ -53,7 +53,7 @@ class BasicTest(TestCase):
         """
         # test the delete product url
         product = Product.objects.all()[0]
-        url = '/product/%s/' % product.item_number
+        url = '/product/xml/%s/' % product.item_number
         response = self.client.delete(url)
         self.failUnlessEqual(response.status_code, 401)
 
@@ -64,16 +64,16 @@ class BasicTest(TestCase):
         """
         # test the listing url
         product = Product.objects.all()[0]
-        url = '/product/'
+        url = '/product/xml/'
         response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 401)
         # test the product detail url
-        url = '/product/%s/' % product.item_number
+        url = '/product/xml/%s/' % product.item_number
         Response = self.client.get(url)
         self.failUnlessEqual(response.status_code, 401)
 
     def test_create_product(self):
-        url = '/product/'
+        url = '/product/xml/'
         new_product = { 
             'item_number': '3H78GH55',
             'title': 'new product',
@@ -104,7 +104,7 @@ class BasicTest(TestCase):
         Test that only user with "rest_can_read_all" can see
         all objects.
         """
-        url = '/product/'
+        url = '/product/xml/'
         response = self.client.get(url, **self.headers)
         # Request should not be validated by a 401
         self.failUnlessEqual(response.status_code, 401)
@@ -119,7 +119,7 @@ class BasicTest(TestCase):
 
     def test_quantity_showed(self):
         product = Product.objects.all()[0]
-        url = '/product/%s/' % product.item_number
+        url = '/product/xml/%s/' % product.item_number
         response = self.client.get(url, **self.advancedheaders)
         # Request should be validated by a 200
         self.failUnlessEqual(response.status_code, 200)
@@ -130,7 +130,7 @@ class BasicTest(TestCase):
 
     def test_no_quantity_showed(self):
         product = Product.objects.all()[0]
-        url = '/product/%s/' % product.item_number
+        url = '/product/xml/%s/' % product.item_number
         response = self.client.get(url, **self.headers)
         # Request should be validated by a 200
         self.failUnlessEqual(response.status_code, 200)
@@ -141,7 +141,7 @@ class BasicTest(TestCase):
 
     def test_get_object(self):
         product = Product.objects.all()[0]
-        url = '/product/%s/' % product.item_number
+        url = '/product/xml/%s/' % product.item_number
 
         response = self.client.get(url, **self.headers)
         # Request should be validated by a 200
@@ -149,7 +149,7 @@ class BasicTest(TestCase):
 
     def test_put_object(self):
         product = Product.objects.all()[0]
-        url = '/product/%s/' % product.item_number
+        url = '/product/xml/%s/' % product.item_number
         # first test we update description
         values = {'description': 'New description'}
 
@@ -183,7 +183,7 @@ class BasicTest(TestCase):
 
     def test_put_wrong_property_name(self):
         product = Product.objects.all()[0]
-        url = '/product/%s/' % product.item_number
+        url = '/product/xml/%s/' % product.item_number
         # first test we update description
         values = {'wrong_1245': 'Wrong property name'}
 
@@ -198,7 +198,7 @@ class BasicTest(TestCase):
     def test_delete_object(self):
         # Make sure that the object exists
         product = Product.objects.all()[0]
-        url = '/product/%s/' % product.item_number
+        url = '/product/xml/%s/' % product.item_number
         
         # should fail because of the user permissions
         response = self.client.delete(url, **self.headers)
@@ -212,7 +212,7 @@ class BasicTest(TestCase):
         Category.objects.get(pk=product.category_id)
 
     def test_basic_header_auth(self):
-        url = '/product/'
+        url = '/product/xml/'
 
         # First wrong password should fail 
         headers = { 'HTTP_AUTHORIZATION': 'Basic %s' % b2a_base64('rest:wrong_password')[:-1]}

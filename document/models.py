@@ -8,3 +8,4 @@ class Document(models.Model):
     def __unicode__(self):
         return u'Document %s' % (self.title or self.id)
 
+    

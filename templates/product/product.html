@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% block css %}
+{{ block.super }}
+<pre>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/screen.css" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/print.css" type="text/css" media="print" />
+    <!--[if lt IE 8]>
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/ie.css" type="text/css" media="screen, projection" />
+    <![endif]-->
+    <style type="text/css">
+        .alt{
+            font-style: italic;
+            color: #666;
+            font-family:"Warnock Pro","Goudy Old Style","Palatino","Book Antiqua",Georgia,serif;
+        }
+        ul.inline{
+            list-style-type: none;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+        
+        ul.inline li{
+            display: inline;
+            margin: 5px;
+        }
+        ul.inline li img{
+            margin: 0;
+            padding: 0;
+        }
+
+    </style>
+</pre>
+{% endblock %}
+{% block content %}
+
+
+
+<div class="container">
+    <h1> Product Detail </h1>
+    <hr/>
+        <h2 class="alt">{{ product.item_number }}{% if product.title %} - {{ product.title }} {% endif %}</h2>
+    <hr/>
+    <div class="span-18 border">
+        <p class="text">
+            {% if product.pictures.all %}
+                {% thumbnail product.pictures.all.0.file 300x5000 as thumb %}
+                <img class="top pull-1 left" alt="{{ product.pictures.all.0.title }}" src="{{ thumb.absolute_url }}" width="{{ thumb.width }}" height="{{ thumb.height }}" />
+            {% endif %}
+            {{ product.description }}
+        </p>
+    </div>
+    <div class="span-6 last">
+        <h6>Category</h6>
+        <p>{{ product.category }} </p>
+
+        {% for picture in product.pictures.all %}
+        {% if forloop.first %}
+        <h6>Pictures</h6>
+        <ul class="inline">
+        {% endif %}
+        {% thumbnail picture.file 90x90 crop upscale as thumb %}
+        <li><a href="{{ picture.file.url }}"><img src="{{ thumb.absolute_url }}" alt="{{ picture.title }}" width="{{ thumb.width }}" height="{{ thumb.height }}" /></a></li>
+        {% if forloop.last %}
+        </ul>
+        {% endif %}
+        {% endfor %}
+
+        {% for document in product.documents.all %}
+        {% if forloop.first %}
+        <h6>Documents</h6>
+        <ol>
+        {% endif %}
+        <li><a href="{{ document.file.url }}"> {{ document }}</a></li>
+        {% if forloop.last %}
+        </ol>
+        {% endif %}
+        {% endfor %}
+    </div>
+    <hr />
+    <div id="footer" class="span-24">
+    <p class="text alt">texts, pictures and documents contained on this pages are <span class="loud">copyright &copy;2009 fulham inc.</span></p>
+    </span>
+</div>
+
+
+{% endblock %}
+

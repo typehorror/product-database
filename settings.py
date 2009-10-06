@@ -40,6 +40,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'djangodblog.middleware.DBLogMiddleware',
 )
 
 ROOT_URLCONF = 'urls'
@@ -50,6 +51,14 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
     os.path.join(PROJECT_PATH, 'templates'),
 )
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.core.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "common.context_processor.static_processor",
+    )
 
 INSTALLED_APPS = (
     'django.contrib.auth',
@@ -63,4 +72,6 @@ INSTALLED_APPS = (
     'document',
     'inventory',
     'django_restapi',
+    'djangodblog',
+    'sorl.thumbnail',
 )
