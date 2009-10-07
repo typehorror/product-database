@@ -1,26 +1,82 @@
 {% extends "base.html" %}
+{% load thumbnail %}
+{% block css %}
+{{ block.super }}
+<pre>
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/screen.css" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/print.css" type="text/css" media="print" />
+    <!--[if lt IE 8]>
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/ie.css" type="text/css" media="screen, projection" />
+    <![endif]-->
+    <style type="text/css">
+        .alt{
+            font-style: italic;
+            color: #666;
+            font-family:"Warnock Pro","Goudy Old Style","Palatino","Book Antiqua",Georgia,serif;
+        }
+        ul.inline{
+            list-style-type: none;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+        
+        ul.inline li{
+            display: inline;
+            margin: 5px;
+        }
+        ul.inline li img{
+            margin: 0;
+            padding: 0;
+        }
+        
+        label{
+            float: left;
+            display: block;
+            width: 10em;
+            margin: 0.5em 0;
+        }
+        
+        p{
+            margin: 1em;
+        }
 
+    </style>
+</pre>
+{% endblock %}
 {% block content %}
 
+<div class="container">
+
+
+    <h1> login </h1>
+    <hr/>
 {% if form.errors %}
-<p>Your username and password didn't match. Please try again.</p>
+<div class="span-8"> &nbsp; </div>
+<div class="error span-8">
+Your username and password didn't match. Please try again.
+</div>
+<div class="clear">
 {% endif %}
-
+<div class="span-7"> &nbsp;</div>
+<div class="span-10" style="border: 2px solid lightgray; background-color: #f8f8f8;">
 <form method="post" action="{% url django.contrib.auth.views.login %}">
-<table>
-<tr>
-    <td>{{ form.username.label_tag }}</td>
-    <td>{{ form.username }}</td>
-</tr>
-<tr>
-    <td>{{ form.password.label_tag }}</td>
-    <td>{{ form.password }}</td>
-</tr>
-</table>
 
-<input type="submit" value="login" />
+    <p>
+    {{ form.username.label_tag }}
+    {{ form.username }}
+    </p>
+    <p>
+    {{ form.password.label_tag }}
+    {{ form.password }}
+    </p>
+
+    <p>
+        <input type="submit" value="login" />
+    </p>
 <input type="hidden" name="next" value="{{ next }}" />
 </form>
+</div>
 
 {% endblock %}
 

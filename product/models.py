@@ -33,6 +33,9 @@ class Product(models.Model):
             ("rest_can_read", "REST-Can read a product property"),
             ("rest_can_read_all", "REST-Can read all product in one request"),
             ("rest_can_see_quantity", "REST-Can see quantity in stock"),
+            ("can_read_all", "Can read all product in one request"),
+            ("can_read", "Can read a product property"),
+            ("can_see_quantity", "Can see quantity in stock"),
         )
 
     def __unicode__(self):
