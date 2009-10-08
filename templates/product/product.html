@@ -2,7 +2,6 @@
 {% load thumbnail %}
 {% block css %}
 {{ block.super }}
-<pre>
     <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/screen.css" type="text/css" media="screen, projection" />
     <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/print.css" type="text/css" media="print" />
     <!--[if lt IE 8]>
@@ -31,14 +30,23 @@
         }
 
     </style>
-</pre>
 {% endblock %}
 {% block content %}
 
 
 
 <div class="container">
+    <div class="span-18 border">
     <h1> Product Detail </h1>
+    </div>
+    <div class="span-6 last">
+    <a href="{% url product_list_view %}">Back to Listing</a>
+    <form action="{% url product_list_view %}" method="get">
+    <label for="id_filter">Search: </label>
+    <input type="text" name="filter" id="id_filter" />
+    <input type="submit" value="go" />
+    </form>
+    </div>
     <hr/>
         <h2 class="alt">{{ product.item_number }}{% if product.title %} - {{ product.title }} {% endif %}</h2>
     <hr/>
@@ -77,10 +85,29 @@
         </ol>
         {% endif %}
         {% endfor %}
+        {% if perms.product.rest_can_see_quantity %}
+            {% for inventory in product.inventories.all %}
+                {% if forloop.first %}
+                <h6>Stock</h6>
+                <ul>
+                {% endif %}
+                <li>
+                {{ inventory.warehouse }}: {{inventory.quantity }}
+                </li>
+                {% if forloop.last %}
+                </ul>
+                {% endif %}
+            {% endfor %}
+        {% else %}
+            <h6>Stock Query</h6>
+            <form action="" method="post">
+            <input type="text" name="quantity" />
+            </form>
+        {% endif %}
     </div>
     <hr />
     <div id="footer" class="span-24">
-    <p class="text alt">texts, pictures and documents contained on this pages are <span class="loud">copyright &copy;2009 fulham inc.</span></p>
+    <p class="text alt">texts, pictures and documents contained on this page are <span class="loud">copyright &copy;2009 fulham inc.</span></p>
     </span>
 </div>
 

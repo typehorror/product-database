@@ -9,8 +9,8 @@ urlpatterns = patterns('product.rest',
 )
 
 urlpatterns += patterns('product.views',
-    url(r'^view/(?P<item_number>[a-z A-Z 0-9 \-]+)/$', 'view_product', name='view_product'),
-    url(r'^view/$', 'view_products', name='view_products'),
+    url(r'^view/(?P<item_number>[a-z A-Z 0-9 \-]+)/$', 'product_detail_view', name='view_product'),
+    url(r'^list/$', 'product_list_view', name='product_list_view'),
     )
 
 

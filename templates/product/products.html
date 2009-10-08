@@ -1,0 +1,142 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% block css %}
+{{ block.super }}
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/screen.css" type="text/css" media="screen, projection" />
+    <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/print.css" type="text/css" media="print" />
+    <!--[if lt IE 8]>
+        <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/ie.css" type="text/css" media="screen, projection" />
+    <![endif]-->
+    <style type="text/css">
+        .alt{
+            font-style: italic;
+            color: #666;
+            font-family:"Warnock Pro","Goudy Old Style","Palatino","Book Antiqua",Georgia,serif;
+        }
+        ul.inline{
+            list-style-type: none;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+        
+        ul.inline li{
+            display: inline;
+            margin: 5px;
+        }
+        ul.inline li img{
+            margin: 0;
+            padding: 0;
+        }
+        .pagination{
+            background: #f8f8f8;
+            border: #bbb solid 1px;
+            padding: 5px;
+            margin: 0px 5px 10px;
+            color: #555;
+        }
+        .pagination .previous{
+            float: left;
+        }
+        .pagination .next{
+            float: right;
+        }
+        .pagination .current{
+            margin-left: 250px;
+            font-weight: bold;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+
+
+
+<div class="container">
+    <h1> Product List </h1>
+    <hr/>
+    <div class="span-18 border">
+        <div class="pagination">
+            {% if products.has_previous %}
+            <span class="previous">
+                <a href="?{{url_parameters}}&page={{ products.previous_page_number }}">previous</a>
+            </span>
+            {% endif %}
+            {% if products.has_next %}
+            <span class="next">
+                <a href="?{{url_parameters}}&page={{ products.next_page_number }}">next</a>
+            </span>
+            {% endif %}
+            <span class="current">
+                Page {{ products.number }} of {{ products.paginator.num_pages }} 
+                <span class="alt"> - {{ results }} result{{ results|pluralize }}</span>
+            </span>
+        </div>
+        <ul>
+        {% for product in products.object_list %}
+            <li>
+            <a href="{{ product.get_absolute_url}} ">{{ product.item_number }}</a>
+                <span class="alt"> {{ product.category }}</span>
+                <span class="alt">
+                    - {{ product.documents.count }} document{{ product.documents.count|pluralize }}
+                    - {{ product.pictures.count }} picture{{ product.pictures.count|pluralize }}
+                </span>
+                <p>
+                {{ product.description|truncatewords:"20" }}
+                </p>
+            </li>
+        {% endfor %}
+        </ul>
+        {% ifnotequal products.paginator.num_pages 1 %}
+        <div class="pagination">
+            {% if products.has_previous %}
+            <span class="previous">
+                <a href="?{{url_parameters}}&page={{ products.previous_page_number }}">previous</a>
+            </span>
+            {% endif %}
+            {% if products.has_next %}
+            <span class="next">
+                <a href="?{{url_parameters}}&page={{ products.next_page_number }}">next</a>
+            </span>
+            {% endif %}
+            <span class="current">
+                Page {{ products.number }} of {{ products.paginator.num_pages }}
+            </span>
+        </div>
+        {% endifnotequal %}
+    </div>
+    <div class="span-6 last">
+        <form method="get">
+        <input type="hidden" name="page" value="{{ products.number }} ">
+        <p>
+        <h6>Category</h6>
+        <select name="category">
+            {% for product_category in categories %}
+                {% if forloop.first %}<option value="">---</option>{% endif %}
+                <option value="{{ product_category.ref }}" {% ifequal category product_category.ref %} SELECTED=SELECTED {% endifequal %}>{{ product_category }}</option>
+            {% endfor %}
+        </select>
+        </p>
+        <p>
+        <h6>Filter</h6>
+        <input type="text" name="filter" value="{{ filter }}" />
+        </p>
+        <p>
+        <input type="submit" value="filter" />
+        </p>
+        </form>
+        {% if category or filter %}
+        <p>
+        <a href="{% url product_list_view %}">reset filter</a> 
+        </p>
+        {% endif %}
+    </div>
+
+    <hr />
+    <div id="footer" class="span-24">
+    <p class="text alt">texts, pictures and documents contained on this page are <span class="loud">copyright &copy;2009 fulham inc.</span></p>
+    </span>
+</div>
+
+
+{% endblock %}
+

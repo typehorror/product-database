@@ -41,6 +41,10 @@ class Product(models.Model):
     def __unicode__(self):
         return self.item_number
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('product.views.product_detail_view', [self.item_number])
+
 
 class Import(models.Model):
     """
