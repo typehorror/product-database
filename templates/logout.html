@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load thumbnail %}
+{% block content %}
+
+<div class="clear" style="height: 50px"></div>
+<div class="container">
+<div class="span-8"> &nbsp; </div>
+<div class="notice span-8">
+<p>
+You have been successfully logged out.
+</p>
+<p>
+You will automaticaly be redirect to the <a href="/login/"> login page </a>.
+</p>
+</div>
+<script type="text/javascript"><!--
+setTimeout('Redirect()',2000);
+function Redirect()
+{
+  location.href = '/login/';
+  }
+  // -->
+</script>
+{% endblock %}
+
+

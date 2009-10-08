@@ -11,6 +11,7 @@ urlpatterns = patterns('',
     # Example:
     (r'^product/', include('product.urls')),
     (r'^login/$', 'django.contrib.auth.views.login', {'template_name':'login.html'}),
+    (r'^logout/$', 'django.contrib.auth.views.logout', {'template_name':'logout.html'}),
 
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
@@ -19,3 +20,7 @@ urlpatterns = patterns('',
     # Uncomment the next line to enable the admin:
     (r'^admin/', include(admin.site.urls)),
 )
+
+urlpatterns += patterns('django.views.generic.simple',
+    (r'^$', 'redirect_to', {'url': '/product/list/'}),
+    )
