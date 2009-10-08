@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block css %}
+{{ block.super }}
+    <style type="text/css">
+        .alt{
+            font-style: italic;
+            color: #666;
+            font-family:"Warnock Pro","Goudy Old Style","Palatino","Book Antiqua",Georgia,serif;
+        }
+        ul.inline{
+            list-style-type: none;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+        
+        ul.inline li{
+            display: inline;
+            margin: 5px;
+        }
+        ul.inline li img{
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="span-24">
+    <a href="/logout/"> logout </a>
+    </div>
+    <hr />
+{% endblock %}

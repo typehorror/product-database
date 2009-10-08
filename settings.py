@@ -44,7 +44,7 @@ MIDDLEWARE_CLASSES = (
 )
 
 ROOT_URLCONF = 'urls'
-LOGIN_REDIRECT_URL = '/product/search/'
+LOGIN_REDIRECT_URL = '/product/list/'
 
 TEMPLATE_DIRS = (
     # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".

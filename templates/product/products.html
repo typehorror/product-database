@@ -1,33 +1,8 @@
-{% extends "base.html" %}
+{% extends "product/base.html" %}
 {% load thumbnail %}
 {% block css %}
 {{ block.super }}
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/screen.css" type="text/css" media="screen, projection" />
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/print.css" type="text/css" media="print" />
-    <!--[if lt IE 8]>
-        <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/ie.css" type="text/css" media="screen, projection" />
-    <![endif]-->
     <style type="text/css">
-        .alt{
-            font-style: italic;
-            color: #666;
-            font-family:"Warnock Pro","Goudy Old Style","Palatino","Book Antiqua",Georgia,serif;
-        }
-        ul.inline{
-            list-style-type: none;
-            display: block;
-            margin: 0;
-            padding: 0;
-        }
-        
-        ul.inline li{
-            display: inline;
-            margin: 5px;
-        }
-        ul.inline li img{
-            margin: 0;
-            padding: 0;
-        }
         .pagination{
             background: #f8f8f8;
             border: #bbb solid 1px;
@@ -48,12 +23,11 @@
     </style>
 {% endblock %}
 {% block content %}
-
-
-
-<div class="container">
+{{ block.super }}
+    <div class="span-24">
     <h1> Product List </h1>
     <hr/>
+    </div>
     <div class="span-18 border">
         <div class="pagination">
             {% if products.has_previous %}
@@ -130,13 +104,5 @@
         </p>
         {% endif %}
     </div>
-
-    <hr />
-    <div id="footer" class="span-24">
-    <p class="text alt">texts, pictures and documents contained on this page are <span class="loud">copyright &copy;2009 fulham inc.</span></p>
-    </span>
-</div>
-
-
 {% endblock %}
 

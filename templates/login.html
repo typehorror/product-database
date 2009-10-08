@@ -2,34 +2,7 @@
 {% load thumbnail %}
 {% block css %}
 {{ block.super }}
-<pre>
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/screen.css" type="text/css" media="screen, projection" />
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/print.css" type="text/css" media="print" />
-    <!--[if lt IE 8]>
-        <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/ie.css" type="text/css" media="screen, projection" />
-    <![endif]-->
     <style type="text/css">
-        .alt{
-            font-style: italic;
-            color: #666;
-            font-family:"Warnock Pro","Goudy Old Style","Palatino","Book Antiqua",Georgia,serif;
-        }
-        ul.inline{
-            list-style-type: none;
-            display: block;
-            margin: 0;
-            padding: 0;
-        }
-        
-        ul.inline li{
-            display: inline;
-            margin: 5px;
-        }
-        ul.inline li img{
-            margin: 0;
-            padding: 0;
-        }
-        
         label{
             float: left;
             display: block;
@@ -42,7 +15,6 @@
         }
 
     </style>
-</pre>
 {% endblock %}
 {% block content %}
 

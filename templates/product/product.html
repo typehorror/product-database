@@ -1,12 +1,7 @@
-{% extends "base.html" %}
+{% extends "product/base.html" %}
 {% load thumbnail %}
 {% block css %}
 {{ block.super }}
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/screen.css" type="text/css" media="screen, projection" />
-    <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/print.css" type="text/css" media="print" />
-    <!--[if lt IE 8]>
-        <link rel="stylesheet" href="{{ STATIC_URL }}css/blueprint/ie.css" type="text/css" media="screen, projection" />
-    <![endif]-->
     <style type="text/css">
         .alt{
             font-style: italic;
@@ -32,9 +27,7 @@
     </style>
 {% endblock %}
 {% block content %}
-
-
-
+{{ block.super }}
 <div class="container">
     <div class="span-18 border">
     <h1> Product Detail </h1>
@@ -105,10 +98,6 @@
             </form>
         {% endif %}
     </div>
-    <hr />
-    <div id="footer" class="span-24">
-    <p class="text alt">texts, pictures and documents contained on this page are <span class="loud">copyright &copy;2009 fulham inc.</span></p>
-    </span>
 </div>
 
 
