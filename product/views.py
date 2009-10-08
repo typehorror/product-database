@@ -9,7 +9,7 @@ from models import Product, Category
 
 def paginate(records, request):
     page = request.GET.get('page', '1')
-    paginator = Paginator(records, 20)
+    paginator = Paginator(records, 10)
  
     try:
         page = int(page)
