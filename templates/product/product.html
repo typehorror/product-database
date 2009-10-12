@@ -1,5 +1,10 @@
 {% extends "product/base.html" %}
 {% load thumbnail %}
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.min.js"></script>
+<script type="text/javascript" src="{{STATIC_URL}}js/jquery.form.js"></script>
+{% endblock %}
 {% block css %}
 {{ block.super }}
     <style type="text/css">
@@ -25,6 +30,18 @@
         }
 
     </style>
+    <script type="text/javascript"> 
+        // wait for the DOM to be loaded 
+        $(document).ready(function() { 
+            // bind 'myForm' and provide a simple callback function 
+            $('#stock_query').ajaxForm(function(response_text) { 
+                alert(response_text); 
+            }); 
+        }); 
+    </script> 
+{% endblock %}
+{% block rightheader %}
+    <a href="{% url product_list_view %}">&lt;... Back to Listing</a>
 {% endblock %}
 {% block content %}
 {{ block.super }}
@@ -33,7 +50,6 @@
     <h1> Product Detail </h1>
     </div>
     <div class="span-6 last">
-    <a href="{% url product_list_view %}">Back to Listing</a>
     <form action="{% url product_list_view %}" method="get">
     <label for="id_filter">Search: </label>
     <input type="text" name="filter" id="id_filter" />
@@ -93,8 +109,13 @@
             {% endfor %}
         {% else %}
             <h6>Stock Query</h6>
-            <form action="" method="post">
-            <input type="text" name="quantity" />
+            <p>
+            You can check the availability of this apparel by entering the quantity you need bellow.
+            </p>
+
+            <form id="stock_query" action="{% url ajax_stock_available product.item_number %}" method="post">
+            <input type="text" name="quantity" size="5" />
+            <input type="submit" value="query" />
             </form>
         {% endif %}
     </div>

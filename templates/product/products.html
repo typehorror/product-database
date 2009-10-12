@@ -20,6 +20,9 @@
             margin-left: 250px;
             font-weight: bold;
         }
+        .searchbox {
+            padding: 5px;
+        }
     </style>
 {% endblock %}
 {% block content %}
@@ -79,6 +82,7 @@
         {% endifnotequal %}
     </div>
     <div class="span-6 last">
+        <div class="searchbox">
         <form method="get">
         <input type="hidden" name="page" value="{{ products.number }} ">
         <p>
@@ -103,6 +107,7 @@
         <a href="{% url product_list_view %}">reset filter</a> 
         </p>
         {% endif %}
+        </div>
     </div>
 {% endblock %}
 

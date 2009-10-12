@@ -26,8 +26,11 @@
 {% endblock %}
 {% block content %}
 <div class="container">
-    <div class="span-24">
+    <div class="span-18">
     <a href="/logout/"> logout </a>
+    </div>
+    <div class="span-6 last" style="text-align: right;">
+    {% block rightheader %}{% endblock %}
     </div>
     <hr />
 {% endblock %}
