@@ -29,6 +29,26 @@
             padding: 0;
         }
 
+        table{
+            border-width: 1px 1px 0px 1px;
+            border-color: #777;
+            border-style: solid;
+        }
+        td{
+            border-bottom: 1px #777 solid;
+            text-align: center;
+        }
+        
+        td.title{
+            color: #eee;
+            font-weight: bold;
+            background: #777;
+            border-bottom: 1px #eee solid;
+            text-align: left;
+        }
+        td.title.last{
+            border-bottom: 1px #777 solid;
+        }
     </style>
     <script type="text/javascript"> 
         // wait for the DOM to be loaded 
@@ -67,6 +87,115 @@
             {% endif %}
             {{ product.description }}
         </p>
+        <div class="clear"></div>
+    <div class="span-14 prepend-2">
+        <p>
+            <table>
+                {% if product.width %}
+                <tr>
+                    <td class="title">
+                        Width
+                    </td>
+                    <td>
+                        {{ product.width }} {{ product.get_width_quantity_unit_display }}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if product.height %}
+                <tr>
+                    <td class="title">
+                        Height
+                    </td>
+                    <td>
+                        {{ product.height }} {{ product.get_height_quantity_unit_display }}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if product.length %}
+                <tr>
+                    <td class="title">
+                        Length
+                    </td>
+                    <td>
+                        {{ product.length }} {{ product.get_lenght_quantity_unit_display }}
+                    </td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td class="title">
+                        Wattage
+                    </td>
+                    <td>
+                        {{ product.wattage }}
+                    </td>
+                </tr>
+                <tr>
+                    <td class="title">
+                        Base
+                    </td>
+                    <td>
+                        {{ product.base }}
+                    </td>
+                </tr>
+                {% if product.upc %}
+                <tr>
+                    <td class="title">
+                        UPC
+                    </td>
+                    <td>
+                        {{ product.upc }}
+                    </td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td class="title">
+                        Catalog Page
+                    </td>
+                    <td>
+                        {{ product.catalog_page }}
+                    </td>
+                </tr>
+                {% if product.listed_price %}
+                <tr>
+                    <td class="title">
+                        Listed Price
+                    </td>
+                    <td>
+                        $ {{ product.listed_price }}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if product.distributor_stock_price %}
+                <tr>
+                    <td class="title">
+                        Distributor Stock Price
+                    </td>
+                    <td>
+                        $ {{ product.distributor_stock_price }}
+                    </td>
+                </tr>
+                {% endif %}
+                {% if product.distributor_no_stock_price %}
+                <tr>
+                    <td class="title">
+                        Distributor No Stock Price
+                    </td>
+                    <td>
+                        $ {{ product.distributor_no_stock_price }}
+                    </td>
+                </tr>
+                {% endif %}
+                <tr>
+                    <td class="title last">
+                        UN SPSC code
+                    </td>
+                    <td>
+                        {{ product.un_spsc_code }}
+                    </td>
+                </tr>
+            </table>
+        </p>
+    </div>
     </div>
     <div class="span-6 last">
         <h6>Category</h6>

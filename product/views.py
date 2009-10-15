@@ -6,7 +6,7 @@ from django.contrib.auth.decorators import user_passes_test
 from common.shortcuts import render_response
 
 from models import Product, Category
-
+from stockquery.models import StockCheck
 
 def paginate(records, request):
     page = request.GET.get('page', '1')
@@ -55,6 +55,11 @@ def ajax_stock_available(request,item_number):
         quantity_requested = request.POST.get('quantity',None)
         if quantity_requested is not None:
             product = get_object_or_404(Product, item_number=item_number)
+            StockCheck.objects.create(user = request.user, 
+                                      product = product,
+                                      ip_address = request.META['REMOTE_ADDR'],
+                                      interface = 'web',
+                                      stock_query = quantity_requested)
             inventories = product.inventories.filter(quantity__gte=quantity_requested)
             if inventories:
                 return HttpResponse("%s units are available in at least one of our warehouse" % quantity_requested)

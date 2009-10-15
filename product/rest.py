@@ -9,6 +9,7 @@ from django.http import Http404, HttpResponse
 from django_restapi.authentication import * 
 
 from models import Product, Category
+from stockquery.models import StockCheck
 from picture.models import Picture
 from forms import ProductForm, ProductFormWithoutCategory, ProductFormWithoutCategoryNotMandatory
 
@@ -51,9 +52,15 @@ class ProductResource(Resource):
             context = {'current_site': Site.objects.get_current()}
             
             if 'item_number' in kwargs:
-                products =  [ get_object_or_404(Product, item_number__iexact=kwargs['item_number']), ]
+                product = get_object_or_404(Product, item_number__iexact=kwargs['item_number'])
+                products =  [ product, ]
                 if 'quantity' in kwargs:
                     context['quantity'] = int(kwargs['quantity'])
+                    StockCheck.objects.create(user = request.user, 
+                                              product = product,
+                                              ip_address = request.META['REMOTE_ADDR'],
+                                              interface = 'rest',
+                                              stock_query = kwargs['quantity'])
             else:
                 products = Product.objects.all().select_related()
                 

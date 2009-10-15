@@ -11,11 +11,37 @@ class Category(models.Model):
     def __unicode__(self):
         return self.title or self.ref
 
+QUANTITY_UNIT_CHOICES=(
+    ('mm', 'Millimeter'),
+    ('m', 'Meter'),
+    ('in', 'Inch'),
+    ('ft', 'Foot'),
+    ('pd', 'Pound'),
+    ('kg', 'Kilogram'),
+)
+
 class Product(models.Model):
-    item_number = models.CharField(max_length=20, unique=True)
+    item_number = models.CharField(max_length=128, unique=True)
     title = models.CharField(max_length=255, blank=True)
     description = models.TextField(blank=True)
     category = models.ForeignKey(Category, related_name='products')
+    activity_code = models.CharField(max_length=255, blank=True)
+    un_spsc_code = models.CharField(max_length=255, blank=True)
+    dist_velocity_code = models.CharField(max_length=255, blank=True)
+    wattage = models.CharField(max_length=255, blank=True)
+    base = models.CharField(max_length=255, blank=True)
+    catalog_page = models.CharField(max_length=255, blank=True)
+    upc = models.CharField(max_length=255, blank=True)
+    height = models.FloatField(null=True, blank=True)
+    width = models.FloatField(null=True, blank=True)
+    length = models.FloatField(null=True, blank=True)
+    height_quantity_unit = models.CharField(max_length=3, choices=QUANTITY_UNIT_CHOICES, blank=True)
+    width_quantity_unit = models.CharField(max_length=3, choices=QUANTITY_UNIT_CHOICES, blank=True)
+    length_quantity_unit = models.CharField(max_length=3, choices=QUANTITY_UNIT_CHOICES, blank=True)
+    listed_price = models.FloatField(null=True, blank=True)
+    distributor_stock_price = models.FloatField(null=True, blank=True)
+    distributor_no_stock_price = models.FloatField(null=True, blank=True)
+    
 
     @property
     def picture(self):

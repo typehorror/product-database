@@ -11,7 +11,7 @@ from django.test import TestCase
 
 from models import Product, Category
 
-class BasicTest(TestCase):
+class RestTest(TestCase):
 
     fixtures = ['categories.json',
                 'groups.json',
