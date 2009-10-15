@@ -1,7 +1,8 @@
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.decorators import user_passes_test
+from django.contrib.auth.decorators import user_passes_test, login_required
+from django.core.urlresolvers import reverse
 
 from common.shortcuts import render_response
 
@@ -23,7 +24,7 @@ def paginate(records, request):
         records = paginator.page(paginator.num_pages)
     return records
 
-@user_passes_test(lambda u: u.has_perm('product.can_read_all'), login_url='/login/')
+@login_required
 def product_list_view(request):
     filter ={}
     url_parameters = []
@@ -35,6 +36,9 @@ def product_list_view(request):
             filter['item_number__icontains'] = request.GET['filter']
             url_parameters.append('filter=%s' % request.GET['filter'])
     products = Product.objects.filter(**filter)
+    # if only one result, display the detail page directly
+    if len(products) == 1:
+        return HttpResponseRedirect(reverse('view_product', args=[products[0].item_number]))
     results = products.count()
     products = paginate(products, request)
     
