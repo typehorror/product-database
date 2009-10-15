@@ -26,11 +26,11 @@
 {% endblock %}
 {% block content %}
 <div class="container">
-    <div class="span-18">
-    <a href="/logout/"> logout </a>
+    <div class="span-18">&nbsp;
+    {% block rightheader %}{% endblock %}
     </div>
     <div class="span-6 last" style="text-align: right;">
-    {% block rightheader %}{% endblock %}
+    connected as {{ user.first_name }} {{ user.last_name }} {{ user.username }} | <a href="/logout/"> logout </a>
     </div>
     <hr />
 {% endblock %}
