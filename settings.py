@@ -75,4 +75,5 @@ INSTALLED_APPS = (
     'django_restapi',
     'djangodblog',
     'sorl.thumbnail',
+    'stockquery',
 )
