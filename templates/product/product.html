@@ -65,7 +65,6 @@
 {% endblock %}
 {% block content %}
 {{ block.super }}
-<div class="container">
     <div class="span-18 border">
     <h1> Product Detail </h1>
     </div>
@@ -155,7 +154,7 @@
                         {{ product.catalog_page }}
                     </td>
                 </tr>
-                {% if product.listed_price %}
+                {% if product.listed_price and perms.product.can_see_listed_price %}
                 <tr>
                     <td class="title">
                         Listed Price
@@ -165,7 +164,7 @@
                     </td>
                 </tr>
                 {% endif %}
-                {% if product.distributor_stock_price %}
+                {% if product.distributor_stock_price and perms.product.can_see_distributor_stock_price %}
                 <tr>
                     <td class="title">
                         Distributor Stock Price
@@ -175,7 +174,7 @@
                     </td>
                 </tr>
                 {% endif %}
-                {% if product.distributor_no_stock_price %}
+                {% if product.distributor_no_stock_price and perms.product.can_see_distributor_no_stock_price %}
                 <tr>
                     <td class="title">
                         Distributor No Stock Price
@@ -237,6 +236,7 @@
                 {% endif %}
             {% endfor %}
         {% else %}
+            {% if perms.product.can_check_stock %}
             <h6>Stock Query</h6>
             <p>
             You can check the availability of this apparel by entering the quantity you need bellow.
@@ -246,10 +246,8 @@
             <input type="text" name="quantity" size="5" />
             <input type="submit" value="query" />
             </form>
+            {% endif %}
         {% endif %}
     </div>
-</div>
-
-
 {% endblock %}
 

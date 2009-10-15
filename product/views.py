@@ -53,7 +53,7 @@ def product_list_view(request):
     context.update(filter)
     return render_response(request,'product/products.html', context)
 
-@user_passes_test(lambda u: u.has_perm('product.can_read'), login_url='/login/')
+user_passes_test(lambda u: u.has_perm('product.can_check_stock'), login_url='/login/')
 def ajax_stock_available(request,item_number):
     if request.POST:
         quantity_requested = request.POST.get('quantity',None)
@@ -69,7 +69,7 @@ def ajax_stock_available(request,item_number):
                 return HttpResponse("%s units are available in at least one of our warehouse" % quantity_requested)
     return HttpResponse("not enough in stock")
 
-@user_passes_test(lambda u: u.has_perm('product.can_read'), login_url='/login/')
+@login_required
 def product_detail_view(request, item_number):
     product = get_object_or_404(Product, item_number=item_number)
     context = {'product': product}
