@@ -96,5 +96,5 @@ class BasicTest(TestCase):
         # the ip_address should be the loopback
         self.assertEqual(stock_check.ip_address, '127.0.0.1')
 
-        # the interface should be web
+        # the interface should be rest
         self.assertEqual(stock_check.interface, 'rest')
