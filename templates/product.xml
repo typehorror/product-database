@@ -5,6 +5,25 @@
     <property name="item_number">{{ product.item_number }}</property>
     <property name="title">{{ product.title }}</property>
     <property name="description">{{ product.description }}</property>
+    <property name="length" uom="{{ product.length_quantity_unit }}">{{ product.length }}</property>
+    <property name="width" uom="{{ product.width_quantity_unit }}">{{ product.width }}</property>
+    <property name="height" uom="{{ product.height_quantity_unit }}">{{ product.height }}</property>
+    <property name="activity_code">{{ product.activity_code }}</property>
+    <property name="un_spsc_code">{{ product.un_spsc_code }}</property>
+    <property name="dist_velocity_code">{{ product.dist_velocity_code }}</property>
+    <property name="wattage">{{ product.wattage }}</property>
+    <property name="base">{{ product.base }}</property>
+    <property name="page">{{ product.catalog_page }}</property>
+    <property name="upc">{{ product.upc }}</property>
+    {% if perms.product.can_see_listed_price %}
+    <property name="listed_price">{% if product.listed_price %}{{ product.listed_price }}{% endif %}</property>
+    {% endif %}
+    {% if perms.product.can_see_distributor_stock_price %}
+    <property name="distributor_with_stock_price">{% if product.distributor_stock_price %}{{ product.distributor_stock_price }}{% endif %}</property>
+    {% endif %}
+    {% if perms.product.can_see_distributor_no_stock_price %}
+    <property name="distributor_without_stock_price">{% if product.distributor_no_stock_price %}{{ product.distributor_no_stock_price }}{% endif %}</property>
+    {% endif %}
     {% for picture in product.pictures.all %}
     <object pk="{{ picture.pk }}" model="picture.picture">
         <property name="title">{{ picture.title }}</property>
