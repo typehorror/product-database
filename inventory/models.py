@@ -12,7 +12,7 @@ class Warehouse(models.Model):
     title = models.CharField(max_length=128, blank=True)
         
     def __unicode__(self):
-        return self.title
+        return self.title or self.ref
 
 class Inventory(models.Model):
     warehouse = models.ForeignKey(Warehouse)
@@ -26,3 +26,15 @@ class Inventory(models.Model):
     def __unicode__(self):
         return 'Inventory for %s at %s' % (self.product, self.warehouse)
         
+class Import(models.Model):
+    """
+    An import contains a list of quantity in stock
+    """
+    title = models.CharField(max_length=128, blank=True)
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True, auto_now_add=True)
+    file = models.FileField(upload_to='import/inventory/%Y/%m/%d/') 
+    is_imported = models.BooleanField(default=False)
+    creation_date = models.DateTimeField(auto_now_add=True)
+    modification_date = models.DateTimeField(auto_now=True, auto_now_add=True)
+    import_date = models.DateTimeField(blank=True, null=True)

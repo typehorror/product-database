@@ -37,7 +37,7 @@ Http401['WWW-Authenticate'] = 'Basic realm="Restricted Access"'
 
 class ProductResource(Resource):
 
-    @permission_required_or_401('product.rest_can_read')
+    #@permission_required_or_401('product.rest_can_read')
     def read(self, request, *args, **kwargs):
         """
         return the complete list of product

@@ -17,8 +17,8 @@ STATIC_ROOT = os.path.join(PROJECT_PATH, 'static')
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
+STATIC_URL = 'http://pdb.fulham.com/static/'
+MEDIA_URL = 'http://pdb.fulham.com/media/'
 
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
@@ -61,6 +61,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "common.context_processor.static_processor",
     )
 
+LOGIN_URL='/login'
+
 INSTALLED_APPS = (
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -76,4 +78,5 @@ INSTALLED_APPS = (
     'djangodblog',
     'sorl.thumbnail',
     'stockquery',
+    'django_extensions',
 )
