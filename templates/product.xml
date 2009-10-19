@@ -27,13 +27,13 @@
     {% for picture in product.pictures.all %}
     <object pk="{{ picture.pk }}" model="picture.picture">
         <property name="title">{{ picture.title }}</property>
-        <property name="url">http://{{current_site}}{{ picture.file.url }}</property>
+        <property name="url">{{ picture.file.url }}</property>
     </object>
     {% endfor %}
     {% for document in product.documents.all %}
     <object pk="{{ document.pk }}" model="document.document">
         <property name="title">{{ document.title }}</property>
-        <property name="url">http://{{current_site}}{{ document.file.url }}</property>
+        <property name="url">{{ document.file.url }}</property>
     </object>
     {% endfor %}
     {% for inventory in product.inventories.all %}
