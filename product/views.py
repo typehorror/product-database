@@ -33,7 +33,7 @@ def product_list_view(request):
             filter['category__ref__iexact'] = request.GET['category']
             url_parameters.append('category=%s' % request.GET['category'])
         if request.GET.get('filter'):
-            filter['item_number__icontains'] = request.GET['filter']
+            filter['item_number__icontains'] = request.GET.get('filter','').strip()
             url_parameters.append('filter=%s' % request.GET['filter'])
     products = Product.objects.filter(**filter)
     # if only one result, display the detail page directly
