@@ -4,20 +4,29 @@ rest interface testing
 from xml.dom.minidom import parseString
 from binascii import b2a_base64
 
-
+from django.core import management
+from django.db.models.signals import post_syncdb
 from django.utils.functional import curry
 from django.test import TestCase
-
+from django.contrib.auth.models import User, Permission
 
 from models import Product, Category
+
+def set_permissions():
+    management.call_command('loaddata', 'users.json', verbosity=0)
+    rest = User.objects.get(username='rest')
+    restadvanced = User.objects.get(username='restadvanced')
+    restadmin = User.objects.get(username='restadmin')
+    rest_permissions = Permission.objects.filter(content_type__model='product',name__startswith='REST')
+    restadmin.user_permissions = rest_permissions
+    restadvanced.user_permissions = rest_permissions.exclude(codename='rest_can_delete').exclude(codename='rest_can_update').exclude(codename='rest_can_create')
+    rest.user_permissions = rest_permissions.filter(codename='rest_can_read')
+
 
 class RestTest(TestCase):
 
     fixtures = ['categories.json',
-                'groups.json',
-                'permissions.json',
                 'products.json',
-                'users.json',
                 'inventories.json',
                 'warehouses.json',
                 ]
@@ -27,7 +36,8 @@ class RestTest(TestCase):
         self.client.delete = curry(self.client.get, REQUEST_METHOD='DELETE')
         self.headers = {'HTTP_AUTHORIZATION': 'Basic %s' % b2a_base64('rest:rest')[:-1]}
         self.advancedheaders = {'HTTP_AUTHORIZATION': 'Basic %s' % b2a_base64('restadvanced:restadvanced')[:-1]}
-        self.adminheaders = {'HTTP_AUTHORIZATION': 'Basic %s' % b2a_base64('restadmin:restadmin')[:-1]}
+        self.adminheaders = {'HTTP_AUTHORIZATION': 'Basic %s' % b2a_base64('restadmin:restadmin')[:-1]}	
+        set_permissions()
 
     def test_security_on_post(self):
         """

@@ -11,13 +11,13 @@ from django.core.urlresolvers import reverse
 
 
 from product.models import Product
+from product.tests import set_permissions
 from models import StockCheck
 
 class BasicTest(TestCase):
 
     fixtures = ['categories.json',
                 'groups.json',
-                'permissions.json',
                 'products.json',
                 'users.json',
                 'inventories.json',
@@ -26,6 +26,7 @@ class BasicTest(TestCase):
         
     def setUp(self):
         self.client = Client()
+        set_permissions()
 
     @property
     def rest_headers(self):
