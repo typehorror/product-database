@@ -30,7 +30,11 @@
     {% block rightheader %}{% endblock %}
     </div>
     <div class="span-6 last" style="text-align: right;">
-    connected as {{ user.first_name }} {{ user.last_name }} {{ user.username }} | <a href="/logout/"> logout </a>
+    connected as {{ user.first_name }} {{ user.last_name }} {{ user.username }}
+    | <a href="/logout/">logout</a>
+    {% if user.is_staff %}
+    | <a href="/admin/">Admin</a>
+    {% endif %}
     </div>
     <hr />
 {% endblock %}
