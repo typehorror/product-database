@@ -1,7 +1,10 @@
+import csv
+
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.decorators import user_passes_test, login_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.core.urlresolvers import reverse
 
 from common.shortcuts import render_response
@@ -23,6 +26,57 @@ def paginate(records, request):
     except (EmptyPage, InvalidPage):
         records = paginator.page(paginator.num_pages)
     return records
+
+@staff_member_required
+def product_list_csv(request):
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=export.csv'
+    writer = csv.writer(response)
+    fields = ('item_number',
+              'title',
+              'description',
+              'category__title',
+              'category__ref',
+              'activity_code', 
+              'un_spsc_code',
+              'dist_velocity_code',
+              'wattage',
+              'base',
+              'catalog_page',
+              'upc',
+              'height',
+              'height_quantity_unit',
+              'width',
+              'width_quantity_unit',
+              'length',
+              'length_quantity_unit',
+              'listed_price',
+              'distributor_stock_price',
+              'distributor_no_stock_price',
+            )
+    filter ={}
+    url_parameters = []
+    if request.GET:
+        if request.GET.get('category'):
+            filter['category__ref__iexact'] = request.GET['category']
+        if request.GET.get('filter'):
+            filter['item_number__icontains'] = request.GET.get('filter','').strip()
+    products = Product.objects.filter(**filter).values_list(*fields)
+    writer.writerow(fields)
+
+    for record in products:
+        try:
+            writer.writerow(record)
+        except UnicodeEncodeError, e:
+            new_cell = []
+            for cell in record:
+                if type(cell) == unicode:
+                    new_cell.append(cell.encode("utf-8"))
+                else:
+                    new_cell.append(cell)
+            writer.writerow(new_cell)
+
+    return response
 
 @login_required
 def product_list_view(request):

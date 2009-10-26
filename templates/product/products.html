@@ -107,6 +107,11 @@
         <a href="{% url product_list_view %}">reset filter</a> 
         </p>
         {% endif %}
+        {% if user.is_staff %}
+        <p>
+        <a href="{% url product_list_csv %}?{{url_parameters}}">Download this list as CSV</a> 
+        </p>
+        {% endif %}
         </div>
     </div>
 {% endblock %}
