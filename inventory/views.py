@@ -14,18 +14,21 @@ from django.shortcuts import get_object_or_404
 def import_inventory(request, object_id):
     import_record = get_object_or_404(Import, pk=object_id)
     
-    
+    # reset inventory models if import need it
+    if import_record.reset_data:
+        # deleting the warehouse will delete the inventories linked to it
+        Warehouse.objects.all().delete()
+
     not_created = []
     warehouse_created = 0
     inventory_created = 0
     inventory_updated = 0
     already_existing = 0
-    object_dict_list = []
     error_found = False
 
     reader = csv.reader(open(import_record.file.path))
     # The first column is the item_number (we ignore it on the first line)
-    # The other columns are inventory place
+    # The other columns are inventory places
     warehouse_refs = [ warehouse.strip() for warehouse in reader.next()[1:] if warehouse.strip() ]
     warehouses = []
     for pos, warehouse_ref in enumerate(warehouse_refs):
@@ -47,22 +50,28 @@ def import_inventory(request, object_id):
             try:
                 quantity = float(quantity)
             except ValueError, e:
-                # impossible to convert the value to a float, we jump to the other quantity column
-                continue
+                # default quantity to 0
+                quantity = 0
             warehouse = warehouses[positition]
-            inventory, created = Inventory.objects.get_or_create(product=product, warehouse=warehouse)                        
-            if inventory.quantity != quantity:
-                if created:
-                    inventory_created += 1
-                else:
-                    inventory_updated += 1
-                inventory.quantity = quantity
-                inventory.save()
+            if import_record.reset_data:
+                # direct creation will speed up the process
+                inventory = Inventory.objects.create(product=product, warehouse=warehouse, quantity=quantity)
+                inventory_created += 1
             else:
-                already_existing += 1
+                inventory, created = Inventory.objects.get_or_create(product=product, warehouse=warehouse)                        
+                if inventory.quantity != quantity:
+                    if created:
+                        inventory_created += 1
+                    else:
+                        inventory_updated += 1
+                    inventory.quantity = quantity
+                    inventory.save()
+                else:
+                    already_existing += 1
 
     import_record.is_imported = True
     import_record.import_date = datetime.now()
+    import_record.products_not_found = ', '.join(not_created)
     import_record.save()
     request.user.message_set.create(message='%s inventories updated, %s inventories created, %s warehouse created, %s product not found, %s already existing records' % \
         (inventory_updated, inventory_created, warehouse_created, len(not_created), already_existing))

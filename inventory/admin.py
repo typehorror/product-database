@@ -24,16 +24,20 @@ class WarehouseAdmin(admin.ModelAdmin):
     list_display = ('ref', 'title',)
 
 class ImportAdminForm(forms.ModelForm):
-    search_fields = ('title',)
-    list_filter = ('is_imported', 'import_date', )
     class Meta:
-        exclude = ('is_imported', 'import_date', 'updated_product', 'created_product')
+        exclude = ('is_imported', 'import_date', 'updated_product', 'created_product', 'products_not_found')
 
 class ImportAdmin(admin.ModelAdmin):
     search_fields = ('title',)
     list_display = ('id', 'title', 'creation_date', 'modification_date', 'is_imported', 'import_date',)
     list_filter = ('is_imported', 'import_date')
-    form = ImportAdminForm
+    fieldsets = (
+        (None,{ 'fields': ('title','file','reset_data')}),
+        ('Not Found', {
+            'fields': ('products_not_found',),
+            'classes': ('collapse',),
+            }),
+        )
 
 
 admin.site.register(Import, ImportAdmin)
