@@ -36,6 +36,11 @@ class ImportAdmin(admin.ModelAdmin):
     form = ImportAdminForm
     actions = ('ImportInventory',)
 
+    def change_view(self, request, object_id, extra_context=None):
+        if request.POST.has_key('_import_inventory'):
+            extra_context = {'messages':['Import Done']}
+        return super(ImportAdmin, self).change_view(request, object_id, extra_context)
+
     def ImportInventory(self, request, queryset):
         not_created = []
         warehouse_created = 0
